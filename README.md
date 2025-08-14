@@ -101,7 +101,7 @@ pip install -r requirements.txt
 ```
 cd CSIMRDenv
 
-python -W ignore train_synapse.py --root_path data/synapse/train_npz --volume_path data/synapse/test_vol_h5 --encoder pvt_v2_b2 --snapshot_path results/model_pth/CCMIX_sfv2b_v2_[3,5,7] --kernel_sizes 3 5 7 --batch_size 6     
+python -W ignore train_synapse.py --root_path data/synapse/train_npz --volume_path data/synapse/test_vol_h5 --encoder pvt_v2_b2 --snapshot_path results/model_pth/CCMIX_sfv2b_v2_[3,5,7] --kernel_sizes 3 5 7 --batch_size 6 --chunk 1  
 ```
 - --root_path：Specifies the root path of the training dataset.    
 - --volume_path：Specifies the path to the test dataset.           
@@ -111,7 +111,7 @@ python -W ignore train_synapse.py --root_path data/synapse/train_npz --volume_pa
 - --batch_size:Sets the batch size
 ### Test:
 ```
-python test.py --volume_path data/synapse/test_vol_h5 --test_path results/model_pth/CCMIX_sfv2b_v2_[3,5,7]/best.pth --test_save_dir results/results/CCMIX_sfv2b_v2_[3,5,7] --snapshot_name CCMIX_sfv2b_v2_[3,5,7] --kernel_sizes 3 5 7 --encoder pvt_v2_b2 --is_savenii True
+python test.py --volume_path data/synapse/test_vol_h5 --test_path results/model_pth/CCMIX_sfv2b_v2_[3,5,7]/best.pth --test_save_dir results/results/CCMIX_sfv2b_v2_[3,5,7] --snapshot_name CCMIX_sfv2b_v2_[3,5,7] --kernel_sizes 3 5 7 --encoder pvt_v2_b2 --chunk 1 --is_savenii True
 ```
 - --test_path:Specifies the path to the trained model checkpoint.     
 - --test_save_dir：Specifies the directory where test results will be saved.    
