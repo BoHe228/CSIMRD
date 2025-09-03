@@ -77,8 +77,7 @@ def channel_shuffle(x, groups):
     # flatten
     x = x.view(batchsize, -1, height, width)
     return x
-
-#   Multi-scale depth-wise convolution (MSDC)
+	
 class MSDC(nn.Module):
     def __init__(self, in_channels, kernel_sizes, stride, activation='relu6', dw_parallel=True):
         super(MSDC, self).__init__()
