@@ -253,36 +253,20 @@ def Cyclic_Channel_shift(input, shift_pixel=1, gamma=1/4, patch_resolution=None)
     B, C, H, W = input.shape
     output = torch.zeros_like(input)
     
-    # 计算需要循环平移的通道数量
     shift_channels = int(C * gamma)
     
-    # 对通道进行循环平移操作
-    # 第一段通道（shift_channels），平移
     output[:, 0:shift_channels, :, shift_pixel:W] = input[:, 0:shift_channels, :, 0:W-shift_pixel]
-    # 将平移出去的部分放回前端
     output[:, 0:shift_channels, :, 0:shift_pixel] = input[:, 0:shift_channels, :, W-shift_pixel:W]
-
-    # 循环平移第2段（shift_channels:shift_channels*2）
     output[:, shift_channels:shift_channels*2, :, 0:W-shift_pixel] = input[:, shift_channels:shift_channels*2, :, shift_pixel:W]
-    # 将平移出去的部分放回前端
     output[:, shift_channels:shift_channels*2, :, 0:shift_pixel] = input[:, shift_channels:shift_channels*2, :, W-shift_pixel:W]
 
-    # 第二次循环平移（沿着H轴）
     output[:, shift_channels*2:shift_channels*3, shift_pixel:H, :] = input[:, shift_channels*2:shift_channels*3, 0:H-shift_pixel, :]
-    # 将平移出去的部分放回前端
     output[:, shift_channels*2:shift_channels*3, 0:shift_pixel, :] = input[:, shift_channels*2:shift_channels*3, H-shift_pixel:H, :]
 
-    # 第二次循环平移（继续循环）
     output[:, shift_channels*3:shift_channels*4, 0:H-shift_pixel, :] = input[:, shift_channels*3:shift_channels*4, shift_pixel:H, :]
-    # 将平移出去的部分放回前端
     output[:, shift_channels*3:shift_channels*4, shift_pixel:H, :] = input[:, shift_channels*3:shift_channels*4, 0:shift_pixel, :]
-
-    # 处理剩余通道
     output[:, shift_channels*4:, ...] = input[:, shift_channels*4:, ...]
-
-    # 最后将 output 从空间形状恢复为原始形状
     return output.flatten(2).transpose(1, 2)
-这段代码的功能
 
 
 class ChannelMix(nn.Module):
