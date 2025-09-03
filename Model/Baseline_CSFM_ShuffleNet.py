@@ -93,12 +93,8 @@ class ShuffleV2Block(nn.Module):
         self.out_channels = out_channels
         self.mid_channels = out_channels // 2
         self.act_layer = act_layer(self.activation, inplace=True)
-
-        # 1. 通道分割：将输入通道平分
         self.in_branch_channels = self.in_channels // 2
         self.out_branch_channels = self.out_channels // 2
-
-        # 第一个分支：包含深度可分离卷积、通道混洗
         self.branch1 = nn.Sequential(
             nn.Conv2d(self.in_branch_channels, self.in_branch_channels, kernel_size=1, stride=self.stride,
                       padding=1, groups=self.in_branch_channels//4, bias=False), 
@@ -119,9 +115,8 @@ class ShuffleV2Block(nn.Module):
         named_apply(partial(_init_weights, scheme=scheme), self)
 
     def channel_shuffle(self, x):
-        # 进行通道混洗
         batch_size, num_channels, height, width = x.size()
-        groups = 4  # 对通道进行2组混洗
+        groups = 4  
         channels_per_group = num_channels // groups
         x = x.view(batch_size, groups, channels_per_group, height, width)
         x = torch.transpose(x, 1, 2).contiguous()
@@ -129,14 +124,10 @@ class ShuffleV2Block(nn.Module):
         return x
 
     def forward(self, x):
-        # 1. 分离通道
         x1, x2 = x.chunk(2, dim=1)
-
-        # 2. 分支1：经过组卷积、通道重排、深度卷积、1x1卷积
         out1 = self.branch1(x1)
 
 
-        # 4. 跳跃连接：相加
         out = out1 + x2
         
         return out
